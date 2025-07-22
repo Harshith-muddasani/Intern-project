@@ -12,7 +12,8 @@ import photoImg from './assets/photo.png';
 import ItemPanel from './features/altar/ItemPanel';
 import DraggableItem from './features/altar/DraggableItem';
 import Navbar from './components/Navbar';
-import html2canvas from 'html2canvas';
+// Remove html2canvas import
+// import html2canvas from 'html2canvas';
 import { useTranslation } from 'react-i18next';
 import frame1Img from './assets/Frame1.png';
 import frame2Img from './assets/Frame1.jpg';
@@ -37,6 +38,8 @@ import LoginForm from './pages/Login';
 import RegisterForm from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import NewsletterDialog from './features/admin/NewsletterDialog'; // Import the new component
+import MainLayout from './components/MainLayout'; // Import the new component
 
 const backgrounds = {
   'Clásico': altarClassic,
@@ -61,8 +64,8 @@ function PublicLanding() {
       <h1 className="text-4xl font-bold mb-6 text-orange-500">Welcome to MiAltar</h1>
       <p className="mb-8 text-lg text-orange-700">Create, customize, and save your own digital altar experience.</p>
       <div className="flex gap-4">
-        <button className="sunrise-btn" onClick={() => navigate('/login')}>Login</button>
-        <button className="sunrise-btn" onClick={() => navigate('/register')}>Register</button>
+        <button className="modern-btn" onClick={() => navigate('/login')}>Login</button>
+        <button className="modern-btn" onClick={() => navigate('/register')}>Register</button>
       </div>
     </div>
   );
@@ -74,7 +77,9 @@ function App() {
   // const [loginName, setLoginName] = useState('');
   // const handleLogin = ...
   // const handleLogout = ...
-  const { user, loading, logout, token } = useAuth();
+  const { user, loading: authLoading, logout, token } = useAuth();
+  const [isSaving, setIsSaving] = useState(false);
+  const [showNewsletterDialog, setShowNewsletterDialog] = useState(false);
 
   // Save user to localStorage
   useEffect(() => {
@@ -173,6 +178,7 @@ function App() {
   const [showAdminPanel, setShowAdminPanel] = useState(false);
   const [showSessionsModal, setShowSessionsModal] = useState(false);
   const navigate = useNavigate();
+  const stageRef = useRef(null); // <-- Add this line at the top of App
 
   // Add fixed canvas size
   const FIXED_STAGE_WIDTH = 900;
@@ -202,14 +208,13 @@ function App() {
   };
 
   const handleExport = () => {
-    const altarElement = document.getElementById('altar-canvas');
-    if (!altarElement) return;
-    html2canvas(altarElement).then((canvas) => {
+    if (stageRef.current) {
+      const dataURL = stageRef.current.toDataURL({ pixelRatio: 2 }); // higher quality
       const link = document.createElement('a');
       link.download = 'my-altar.png';
-      link.href = canvas.toDataURL();
+      link.href = dataURL;
       link.click();
-    });
+    }
   };
 
   // Handle selecting and resizing items
@@ -245,6 +250,8 @@ function App() {
 
   // Handle session name confirmation
   const handleConfirmSessionName = async () => {
+    if (isSaving) return; // Prevent multiple clicks
+
     if (!sessionName.trim()) {
       alert('Please enter a session name');
       return;
@@ -266,6 +273,7 @@ function App() {
       timestamp: Date.now(),
     };
     
+    setIsSaving(true); // Disable button
     try {
       await saveSession(token, newSession);
       setSessions(await getSessions(token));
@@ -273,6 +281,8 @@ function App() {
       setSessionName('');
     } catch (e) {
       alert(e.message);
+    } finally {
+      setIsSaving(false); // Re-enable button
     }
   };
 
@@ -316,17 +326,21 @@ function App() {
   // }; // This line is removed as per the edit hint
   // const handleLogout = () => setUser(null); // This line is removed as per the edit hint
 
-  if (loading) {
-    return <div className="flex items-center justify-center min-h-screen text-orange-500 text-xl">Loading...</div>;
+  const handleSendNewsletter = () => {
+    setShowNewsletterDialog(true);
+  };
+
+  if (authLoading) {
+    return <div className="flex items-center justify-center min-h-screen text-gray-500 text-xl">Loading...</div>;
   }
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       {/* Session Naming Dialog */}
       {showSessionDialog && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-8 w-full max-w-md mx-auto flex flex-col items-center justify-center shadow-xl">
-            <h3 className="text-2xl font-semibold mb-6 text-center text-orange-600 w-full">
+            <h3 className="text-2xl font-semibold mb-6 text-center text-gray-700 w-full">
               {t('enterSessionName')}
             </h3>
             <input
@@ -334,7 +348,7 @@ function App() {
               value={sessionName}
               onChange={(e) => setSessionName(e.target.value)}
               placeholder={t('sessionNamePlaceholder')}
-              className="w-4/5 p-3 border border-orange-200 rounded-lg mb-6 focus:outline-none focus:ring-2 focus:ring-orange-400 text-center text-lg"
+              className="w-4/5 p-3 border border-gray-300 rounded-lg mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500 text-center text-lg"
               onKeyPress={(e) => {
                 if (e.key === 'Enter') {
                   handleConfirmSessionName();
@@ -342,57 +356,47 @@ function App() {
               }}
               autoFocus
             />
-            <div className="flex gap-4 justify-center w-full">
+            <div className="flex gap-6 justify-center w-full">
               <button
                 onClick={handleCancelSessionName}
                 className="px-6 py-2 text-gray-600 hover:text-gray-800 transition-colors border border-gray-200 rounded-lg bg-gray-50"
+                disabled={isSaving}
               >
                 {t('cancel')}
               </button>
               <button
                 onClick={handleConfirmSessionName}
-                className="sunrise-btn px-6 py-2 text-lg"
+                className="modern-btn px-6 py-2 text-lg"
+                disabled={isSaving}
               >
-                {t('confirm')}
+                {isSaving ? 'Saving...' : t('confirm')}
               </button>
             </div>
           </div>
         </div>
       )}
-      <Routes>
-        <Route path="/login" element={<LoginForm />} />
-        <Route path="/register" element={<RegisterForm />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-      <Route path="/profile" element={
-        <RequireAuth user={user}>
-          <>
-            <div className="w-full flex">
-              <button
-                className="sunrise-btn ml-6 mt-2 mb-2"
-                onClick={() => navigate(-1)}
-              >
-                ← Back
-              </button>
-            </div>
-            <div className="flex flex-col items-center justify-center min-h-[60vh]">
+
+      {/* Newsletter Dialog */}
+      {showNewsletterDialog && (
+        <NewsletterDialog
+          token={token}
+          onClose={() => setShowNewsletterDialog(false)}
+        />
+      )}
+
+      <MainLayout onSendNewsletter={handleSendNewsletter}>
+        <Routes>
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/register" element={<RegisterForm />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/profile" element={
+            <RequireAuth user={user}>
               <UpdatePasswordForm />
-            </div>
-          </>
-        </RequireAuth>
-      } />
-      <Route path="/sessions" element={
-        <RequireAuth user={user}>
-          <>
-            <div className="w-full flex">
-              <button
-                className="sunrise-btn ml-6 mt-2 mb-2"
-                onClick={() => navigate(-1)}
-              >
-                ← Back
-              </button>
-            </div>
-            <div className="flex flex-col items-center justify-center min-h-[60vh]">
+            </RequireAuth>
+          } />
+          <Route path="/sessions" element={
+            <RequireAuth user={user}>
               <h2 className="text-xl font-bold mb-4 text-center">Your Saved Sessions</h2>
               {sessions.length === 0 ? (
                 <div className="text-gray-500 text-center">No saved sessions.</div>
@@ -404,80 +408,63 @@ function App() {
                     Items: s.items.length,
                     "Altar Style": s.altarStyle,
                     Actions: (
-                      <div className="flex gap-2">
-                        <button className="text-xs px-2 py-1 bg-orange-100 text-orange-600 rounded hover:bg-orange-200" onClick={() => { handleLoadSession(s); navigate('/'); }}>Load</button>
+                      <div className="flex gap-6">
+                        <button className="text-xs px-2 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200" onClick={() => { handleLoadSession(s); navigate('/'); }}>Load</button>
                         <button className="text-xs px-2 py-1 bg-red-100 text-red-600 rounded hover:bg-red-200" onClick={() => handleDeleteSession(s.name)}>Delete</button>
                       </div>
                     )
                   }))}
                 />
               )}
-            </div>
-          </>
-        </RequireAuth>
-      } />
-      <Route path="/admin" element={
-        <RequireAdmin user={user}>
-          <AdminPanel />
-        </RequireAdmin>
-      } />
-      <Route path="/" element={
-        user ? (
-          <RequireAuth user={user}>
-            {/* Main altar builder UI (existing code) */}
-            <>
-              <Navbar
-                user={user}
-                onLogout={logout}
-                onProfile={() => navigate('/profile')}
-                onViewSessions={() => navigate('/sessions')}
-                onAdminPanel={() => navigate('/admin')}
-              />
-              <h1 className="text-3xl font-bold mb-4 text-center" style={{ color: '#ff5e62' }}>{t('welcome')}</h1>
-              <div className="flex flex-1 w-full h-full overflow-hidden main-flex">
-                {/* Fixed Sidebar */}
-                <aside className="sidebar sunrise-panel w-72 min-w-[220px] max-w-xs h-full p-4 overflow-y-auto border-r flex-shrink-0 bg-[#fff8f0] border-2 border-orange-200 rounded-2xl fixed top-[72px] left-0 z-40" style={{ height: 'calc(100vh - 72px)' }}>
-                  <ItemPanel
-                    onAdd={handleAddItem}
-                    selectedIdx={selectedIdx}
-                    selectedItem={items[selectedIdx] || null}
-                    resizeValue={resizeValue}
-                    onResize={handleResize}
-                    rotateValue={rotateValue}
-                    onRotate={handleRotate}
-                    altarStyle={altarStyle}
-                    setAltarStyle={setAltarStyle}
-                    altarStyles={altarStyles}
-                    setAltarStyles={setAltarStyles}
-                    offerings={Object.values(offerings).flat()}
-                    setOfferings={setOfferings}
-                    onAddAltarStyle={handleAddAltarStyle}
-                    onDeleteAltarStyle={handleDeleteAltarStyle}
-                    onAddOffering={handleAddOffering}
-                    onDeleteOffering={handleDeleteOffering}
-                  />
-                </aside>
-                {/* Main Content + Count Box */}
-                <main className="flex-1 flex flex-col items-center justify-center h-full w-full overflow-auto relative ml-72" style={{ marginLeft: '18rem' }}>
-                  <div className="relative flex-1 flex justify-center items-center h-full w-full">
+            </RequireAuth>
+          } />
+          <Route path="/admin" element={
+            <RequireAdmin user={user}>
+              <AdminPanel />
+            </RequireAdmin>
+          } />
+          <Route path="/" element={
+            user ? (
+              <RequireAuth user={user}>
+                <div className="flex flex-1 w-full h-full overflow-hidden">
+                  <aside 
+                    className="sidebar w-72 min-w-[220px] max-w-xs h-full p-6 overflow-y-auto flex-shrink-0 fixed top-[72px] left-0 z-40" 
+                    style={{ height: 'calc(100vh - 72px)' }}
+                  >
+                    <div className="space-y-6">
+                      <ItemPanel
+                        onAdd={handleAddItem}
+                        selectedIdx={selectedIdx}
+                        selectedItem={items[selectedIdx] || null}
+                        resizeValue={resizeValue}
+                        onResize={handleResize}
+                        rotateValue={rotateValue}
+                        onRotate={handleRotate}
+                        altarStyle={altarStyle}
+                        setAltarStyle={setAltarStyle}
+                        altarStyles={altarStyles}
+                        setAltarStyles={setAltarStyles}
+                        offerings={Object.values(offerings).flat()}
+                        setOfferings={setOfferings}
+                        onAddAltarStyle={handleAddAltarStyle}
+                        onDeleteAltarStyle={handleDeleteAltarStyle}
+                        onAddOffering={handleAddOffering}
+                        onDeleteOffering={handleDeleteOffering}
+                      />
+                    </div>
+                  </aside>
+                  <main className="flex-1 flex flex-col items-center justify-center h-full w-full overflow-auto relative" style={{ marginLeft: '18rem' }}>
+                    <h1 className="text-3xl font-bold mb-4 text-center text-gray-700">Welcome, {user.username}!</h1>
                     <div
                       id="altar-canvas"
-                      className="bg-white rounded overflow-hidden shadow-md w-full h-full flex items-center justify-center sunrise-panel"
+                      className="bg-white rounded overflow-hidden shadow-md"
                       onDragOver={handleDragOver}
                       onDrop={handleDrop}
                       ref={altarRef}
-                      onClick={e => {
-                        // Only deselect if the user clicks on the background, not on a sticker
-                        if (e.target === e.currentTarget) {
-                          setSelectedIdx(null);
-                        }
-                      }}
                     >
-                      <Stage width={FIXED_STAGE_WIDTH} height={FIXED_STAGE_HEIGHT}>
+                      <Stage ref={stageRef} width={FIXED_STAGE_WIDTH} height={FIXED_STAGE_HEIGHT}>
                         <Layer>
-                          {bgImage && (
-                            <KonvaImage image={bgImage} width={FIXED_STAGE_WIDTH} height={FIXED_STAGE_HEIGHT} />
-                          )}
+                          {bgImage && <KonvaImage image={bgImage} width={FIXED_STAGE_WIDTH} height={FIXED_STAGE_HEIGHT} />}
                           {items.map((item, i) => (
                             <DraggableItem
                               key={i}
@@ -486,7 +473,6 @@ function App() {
                               stageHeight={FIXED_STAGE_HEIGHT}
                               isSelected={selectedIdx === i}
                               onSelect={() => handleSelectItem(i)}
-                              pulse={selectedIdx === i}
                               onDelete={() => handleDeleteItem(i)}
                               rotation={item.rotation || 0}
                             />
@@ -494,43 +480,21 @@ function App() {
                         </Layer>
                       </Stage>
                     </div>
-                    {/* Count Box on the right */}
-                    <div style={{ position: 'absolute', right: 24, top: 20, display: 'flex', flexDirection: 'column', alignItems: 'center' }} className={items.length > 0 ? 'fade-in-right' : ''}>
-                      <div className="font-extrabold text-lg mb-1" style={{ color: 'linear-gradient(90deg, #ffb300 0%, #ff5e62 60%, #ff3cac 100%)', background: 'linear-gradient(90deg, #ffb300 0%, #ff5e62 60%, #ff3cac 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '1px', textShadow: '0 2px 8px #ffb30033' }}>
-                        {t('totalCount')}
-                      </div>
-                      <div className="bg-white border-2 border-[#ffb88c] rounded-2xl shadow-lg px-6 py-3 flex flex-col items-center gap-1" style={{ minWidth: 80, justifyContent: 'center' }}>
-                        <span className={"text-[#ff5e62] font-extrabold text-2xl drop-shadow " + (items.length > 0 ? 'bounce-in' : '')}>{items.length}</span>
-                        <span className="text-xs text-[#ffb88c] tracking-wide">{t('onAltar')}</span>
-                      </div>
+                    <div className="mt-4 flex justify-center gap-4">
+                      <button onClick={handleSaveSession} className="modern-btn">Save Session</button>
+                      <button onClick={handleExport} className="modern-btn">Save Altar as Image</button>
                     </div>
-                  </div>
-                  {/* Save Session and Save Altar Buttons */}
-                  <div className="mt-2 text-center flex flex-row justify-center gap-4">
-                    <button
-                      onClick={handleSaveSession}
-                      className="sunrise-btn"
-                    >
-                      {t('saveSession')}
-                    </button>
-                    <button
-                      onClick={handleExport}
-                      className="sunrise-btn"
-                    >
-                      {t('saveAltar')}
-                    </button>
-                  </div>
-                </main>
-              </div>
-            </>
-          </RequireAuth>
-        ) : (
-          <PublicLanding />
-        )
-      } />
-      <Route path="*" element={<LoginForm />} />
-    </Routes>
-    </>
+                  </main>
+                </div>
+              </RequireAuth>
+            ) : (
+              <PublicLanding />
+            )
+          } />
+          <Route path="*" element={<LoginForm />} />
+        </Routes>
+      </MainLayout>
+    </div>
   );
 }
 

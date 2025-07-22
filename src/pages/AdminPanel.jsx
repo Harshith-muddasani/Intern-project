@@ -20,7 +20,7 @@ export default function AdminPanel() {
   if (error) return <div className="p-8 text-red-500">Error: {error}</div>;
   if (!data) return <div className="p-8">Loading...</div>;
   return (
-    <div className="sunrise-panel p-8 bg-white rounded-xl shadow-md max-w-4xl mx-auto mt-8">
+    <div className="modern-panel p-8 bg-white rounded-xl shadow-md max-w-4xl mx-auto mt-8">
       <h2 className="text-2xl font-bold mb-4 text-orange-500">Admin Panel: All Users & Sessions</h2>
       <div className="mb-6">
         <h3 className="text-xl font-semibold mb-2 text-orange-600">Users</h3>

@@ -94,7 +94,7 @@ export default function OfferingManager({ offerings, setOfferings, onAdd, onDele
                 <img
                   src={offering.src || offering.image}
                   alt={offering.name}
-                  className="w-12 h-12 object-cover rounded border border-orange-200 bg-white mb-1"
+                  className="w-12 h-12 object-cover rounded mb-1"
                   style={{ maxWidth: '48px', maxHeight: '48px' }}
                   draggable={true}
                   onDragStart={e => {
@@ -103,7 +103,7 @@ export default function OfferingManager({ offerings, setOfferings, onAdd, onDele
                   title="Drag to altar"
                 />
               )}
-              <span className="text-xs text-orange-600 text-center truncate w-12" title={offering.name}>{offering.name}</span>
+              <span className="text-xs text-blue-700 text-center truncate w-12" title={offering.name}>{offering.name}</span>
               <button
                 className="mt-1 text-xs text-red-400 hover:text-red-600 focus:outline-none"
                 title="Delete offering"
@@ -155,7 +155,7 @@ export default function OfferingManager({ offerings, setOfferings, onAdd, onDele
             />
           )}
           {error && <div className="text-red-500 text-xs text-center">{error}</div>}
-          <button type="submit" className="sunrise-btn">Add Offering</button>
+          <button type="submit" className="modern-btn">Add Offering</button>
         </form>
       </>}
     </div>

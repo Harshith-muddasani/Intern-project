@@ -8,7 +8,7 @@ let token;
 beforeAll(async () => {
   await mongoose.connect(process.env.MONGODB_URI);
   await User.deleteMany({ username: 'admin' });
-  await request(app).post('/auth/register').send({ username: 'admin', password: 'adminpass' });
+  await request(app).post('/auth/register').send({ username: 'admin', email: 'admin@example.com', password: 'adminpass' });
   const res = await request(app).post('/auth/login').send({ username: 'admin', password: 'adminpass' });
   token = res.body.token;
 });
@@ -29,7 +29,7 @@ describe('Admin Endpoints', () => {
   });
 
   it('should forbid non-admin users', async () => {
-    await request(app).post('/auth/register').send({ username: 'notadmin', password: 'testpass' });
+    await request(app).post('/auth/register').send({ username: 'notadmin', email: 'notadmin@example.com', password: 'testpass' });
     const loginRes = await request(app).post('/auth/login').send({ username: 'notadmin', password: 'testpass' });
     const notAdminToken = loginRes.body.token;
     const res = await request(app)

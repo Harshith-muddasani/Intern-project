@@ -16,7 +16,7 @@ describe('Auth Endpoints', () => {
   it('should register a new user', async () => {
     const res = await request(app)
       .post('/auth/register')
-      .send({ username: 'testuser1', password: 'testpass' });
+      .send({ username: 'testuser1', email: 'testuser1@example.com', password: 'testpass' });
     expect(res.statusCode).toEqual(201);
     expect(res.body.message).toBe('User registered.');
   });
@@ -24,17 +24,17 @@ describe('Auth Endpoints', () => {
   it('should not register duplicate user', async () => {
     await request(app)
       .post('/auth/register')
-      .send({ username: 'testuser2', password: 'testpass' });
+      .send({ username: 'testuser2', email: 'testuser2@example.com', password: 'testpass' });
     const res = await request(app)
       .post('/auth/register')
-      .send({ username: 'testuser2', password: 'testpass' });
+      .send({ username: 'testuser2', email: 'testuser2@example.com', password: 'testpass' });
     expect(res.statusCode).toEqual(409);
   });
 
   it('should login with correct credentials', async () => {
     await request(app)
       .post('/auth/register')
-      .send({ username: 'testuser3', password: 'testpass' });
+      .send({ username: 'testuser3', email: 'testuser3@example.com', password: 'testpass' });
     const res = await request(app)
       .post('/auth/login')
       .send({ username: 'testuser3', password: 'testpass' });

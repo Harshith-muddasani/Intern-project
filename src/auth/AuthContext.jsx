@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { login as apiLogin, register as apiRegister, getProfile } from './api';
+import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext();
 
@@ -8,6 +9,7 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem('token'));
   const [loading, setLoading] = useState(!!token);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (token) {
@@ -50,6 +52,7 @@ export function AuthProvider({ children }) {
     } catch (err) {
       setError(err.message);
       setLoading(false);
+      throw err; // Re-throw the error
     }
   };
 
@@ -57,6 +60,7 @@ export function AuthProvider({ children }) {
     setUser(null);
     setToken(null);
     localStorage.removeItem('token');
+    navigate('/login');
   };
 
   return (

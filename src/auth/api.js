@@ -71,6 +71,27 @@ export async function deleteSession(token, name) {
   return res.json();
 }
 
+export async function getAllUsers(token) {
+  const res = await fetch(`${API_URL}/admin/users/all`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  if (!res.ok) throw new Error((await res.json()).message || 'Failed to fetch users');
+  return res.json();
+}
+
+export async function sendNewsletter(token, { subject, content, recipients }) {
+  const res = await fetch(`${API_URL}/admin/newsletter`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify({ subject, content, recipients }),
+  });
+  if (!res.ok) throw new Error((await res.json()).message || 'Failed to send newsletter');
+  return res.json();
+}
+
 // Altar Styles API
 export async function getAltarStyles(token) {
   const res = await fetch('http://localhost:4000/altar-styles', {

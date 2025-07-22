@@ -82,7 +82,7 @@ export default function AltarStyleManager({ altarStyles, setAltarStyles, onAdd, 
           altarStyles.map((style, idx) => (
             <div
               key={idx}
-              className={`flex flex-col items-center min-w-[48px] max-w-[56px] bg-white border border-orange-200 rounded-lg shadow p-1 cursor-pointer transition-all duration-150 ${selectedStyle && selectedStyle.name === style.name ? 'ring-2 ring-[#ff5e62] scale-105' : 'hover:ring-2 hover:ring-orange-300'}`}
+              className={`flex flex-col items-center min-w-[48px] max-w-[56px] cursor-pointer transition-all duration-150 ${selectedStyle && selectedStyle.name === style.name ? 'scale-105' : ''}`}
               onClick={() => onSelectStyle && onSelectStyle(style)}
               title={style.name}
             >
@@ -90,11 +90,11 @@ export default function AltarStyleManager({ altarStyles, setAltarStyles, onAdd, 
                 <img
                   src={style.image}
                   alt={style.name}
-                  className="w-8 h-8 object-cover rounded border border-orange-200 bg-white"
+                  className="w-8 h-8 object-cover rounded"
                   style={{ maxWidth: '32px', maxHeight: '32px' }}
                 />
               )}
-              <span className="text-[10px] text-orange-600 mt-1 text-center truncate w-10" title={style.name}>{style.name}</span>
+              <span className="text-[10px] text-blue-700 mt-1 text-center truncate w-10" title={style.name}>{style.name}</span>
               <button
                 className="mt-1 text-xs text-red-400 hover:text-red-600 focus:outline-none"
                 title="Delete style"
@@ -135,7 +135,7 @@ export default function AltarStyleManager({ altarStyles, setAltarStyles, onAdd, 
             />
           )}
           {error && <div className="text-red-500 text-xs text-center">{error}</div>}
-          <button type="submit" className="sunrise-btn">Add Style</button>
+          <button type="submit" className="modern-btn">Add Style</button>
         </form>
       </>}
     </div>

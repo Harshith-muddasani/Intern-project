@@ -9,7 +9,7 @@ let token, styleId;
 beforeAll(async () => {
   await mongoose.connect(process.env.MONGODB_URI);
   await User.deleteMany({ username: 'altaruser' });
-  await request(app).post('/auth/register').send({ username: 'altaruser', password: 'testpass' });
+  await request(app).post('/auth/register').send({ username: 'altaruser', email: 'altaruser@example.com', password: 'testpass' });
   const res = await request(app).post('/auth/login').send({ username: 'altaruser', password: 'testpass' });
   token = res.body.token;
 });

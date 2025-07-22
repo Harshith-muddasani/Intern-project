@@ -31,7 +31,7 @@ export default function UpdatePasswordForm() {
   };
 
   return (
-    <div className="sunrise-panel p-8 flex flex-col items-center shadow-lg w-[350px] mt-8">
+    <div className="modern-panel p-8 flex flex-col items-center shadow-lg w-[350px] mt-8">
       <h2 className="text-xl font-bold mb-4 text-orange-500">Update Password</h2>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
         <input
@@ -52,7 +52,7 @@ export default function UpdatePasswordForm() {
         />
         {error && <div className="text-red-500 text-sm text-center">{error}</div>}
         {success && <div className="text-green-600 text-sm text-center">{success}</div>}
-        <button type="submit" className="sunrise-btn" disabled={loading}>
+        <button type="submit" className="modern-btn" disabled={loading}>
           {loading ? 'Please wait...' : 'Update Password'}
         </button>
       </form>

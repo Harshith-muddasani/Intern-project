@@ -2,157 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+/* General App Styles */
 body {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-  color: #222;
-  margin: 0;
-  padding: 0;
+  background-color: #F9FAFB; /* Soft Light Gray */
+  color: #374151; /* Softer Charcoal for text */
 }
 
-.sunrise-panel {
-  background: rgba(255, 236, 210, 0.95);
-  border-radius: 1rem;
-  box-shadow: 0 4px 24px 0 rgba(252, 182, 159, 0.15);
-}
-
-.sunrise-btn {
-  background: linear-gradient(90deg, #ff9966 0%, #ff5e62 100%);
-  color: #fff;
-  border: none;
-  border-radius: 0.75rem;
-  padding: 0.5rem 1.5rem;
-  font-weight: 600;
-  box-shadow: 0 2px 8px 0 rgba(252, 182, 159, 0.15);
-  transition: background 0.2s, box-shadow 0.2s;
-  cursor: pointer;
-}
-.sunrise-btn:hover {
-  background: linear-gradient(90deg, #ff5e62 0%, #ff9966 100%);
-  box-shadow: 0 4px 16px 0 rgba(252, 182, 159, 0.25);
-}
-
-.logo-navbar {
-  background: linear-gradient(90deg, #ffb300 0%, #ff5e62 60%, #ff3cac 100%);
-  color: #fff;
-  box-shadow: 0 2px 8px 0 rgba(252, 182, 159, 0.15);
-}
-
-.logo-navbar .nav-btn {
-  background: rgba(255,255,255,0.15);
-  color: #fff;
-  border: none;
-  border-radius: 0.75rem;
-  padding: 0.5rem 1.2rem;
-  font-weight: 600;
-  margin-left: 0.5rem;
-  transition: background 0.2s, color 0.2s;
-}
-.logo-navbar .nav-btn:hover {
-  background: #fff;
-  color: #ff5e62;
+/* Sidebar Styling */
+.sidebar {
+  background-color: white;
+  border-right: 1px solid #E5E7EB; /* Cool Gray */
 }
 
 /* Hide scrollbar but keep scroll functionality */
-body, .main-flex, .sidebar, main, html {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none;  /* IE 10+ */
-}
-body::-webkit-scrollbar, .main-flex::-webkit-scrollbar, .sidebar::-webkit-scrollbar, main::-webkit-scrollbar, html::-webkit-scrollbar {
+.sidebar::-webkit-scrollbar {
   display: none;
 }
 
-body, html {
-  overflow-y: auto !important;
-  scrollbar-width: thin;
-  scrollbar-color: #ffb88c #fff8f0;
-}
-body::-webkit-scrollbar, html::-webkit-scrollbar {
-  width: 10px;
-  background: #fff8f0;
-}
-body::-webkit-scrollbar-thumb, html::-webkit-scrollbar-thumb {
-  background: #ffb88c;
-  border-radius: 8px;
-}
-
-@keyframes fadeInRight {
-  from { opacity: 0; transform: translateX(40px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-.fade-in-right {
-  animation: fadeInRight 0.7s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-@keyframes bounceIn {
-  0% { transform: scale(0.7); }
-  60% { transform: scale(1.2); }
-  80% { transform: scale(0.95); }
-  100% { transform: scale(1); }
-}
-.bounce-in {
-  animation: bounceIn 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-@keyframes pulseGlow {
-  0% { box-shadow: 0 0 0 0 #ff5e6240; }
-  70% { box-shadow: 0 0 16px 8px #ff5e6240; }
-  100% { box-shadow: 0 0 0 0 #ff5e6240; }
-}
-.pulse-glow {
-  animation: pulseGlow 1.2s infinite;
-}
-
-.sticker-img {
-  transition: transform 0.18s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.18s;
-}
-.sticker-img:hover {
-  transform: scale(1.08) rotate(-2deg);
-  box-shadow: 0 4px 16px 0 #ffb88c55;
-}
-
-/* Delete button hover animation */
-.konva-delete-btn:hover rect {
-  filter: none;
-  transform: none;
-  transition: none;
-}
-.konva-delete-btn:hover image {
-  transform: none;
-  transition: none;
-}
-
-/* Resize slider animation */
-.resize-slider {
-  transition: box-shadow 0.18s, transform 0.18s;
-  }
-.resize-slider:focus, .resize-slider:hover {
-  box-shadow: 0 0 0 3px #ffb88c55;
-  transform: scale(1.04);
-  outline: none;
-}
-
-@media (max-width: 900px) {
-  .main-flex {
-    flex-direction: column;
-  }
-  .sidebar {
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-    border-right: none !important;
-    border-bottom: 2px solid #fcb69f !important;
-}
-  .logo-navbar {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 1rem 0.5rem;
-  }
-  .logo-navbar nav {
-    margin-top: 0.5rem;
-    width: 100%;
-    justify-content: flex-start;
-    gap: 0.5rem;
-  }
+.sidebar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
