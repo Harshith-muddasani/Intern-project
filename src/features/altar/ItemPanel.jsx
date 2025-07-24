@@ -27,10 +27,9 @@ export default function ItemPanel({
   const selectedStyleObj = altarStyles.find(s => s.name === altarStyle);
 
   const buttonStyles = {
-    base: `w-full text-left font-semibold py-3 px-4 transition duration-200 rounded-lg mb-2
-          flex items-center justify-between`,
-    active: `bg-gray-100 text-gray-800`,
-    inactive: `bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-800`
+    base: `w-full text-left font-semibold py-3 px-4 transition duration-200 rounded-lg mb-2 flex items-center justify-between`,
+    active: ``,
+    inactive: ``
   };
 
   return (
@@ -40,19 +39,25 @@ export default function ItemPanel({
         {/* Altar Styles first */}
         <div>
           <button
-            className={`${buttonStyles.base} ${
-              openSection === 'altarStyles' ? buttonStyles.active : buttonStyles.inactive
-            }`}
+            className={buttonStyles.base}
+            style={{
+              backgroundColor: openSection === 'altarStyles' ? 'var(--theme-input, #f3f4f6)' : 'var(--theme-card-bg, #fff)',
+              color: 'var(--theme-text, #111827)',
+              border: '1px solid var(--theme-border, #e5e7eb)'
+            }}
             onClick={() => setOpenSection(openSection === 'altarStyles' ? '' : 'altarStyles')}
           >
             <span>Altar Styles</span>
-            <span className="transform transition-transform duration-200" 
+            <span className="transform transition-transform duration-200"
                   style={{ transform: openSection === 'altarStyles' ? 'rotate(180deg)' : 'rotate(0deg)' }}>
               ▼
             </span>
           </button>
           {openSection === 'altarStyles' && (
-            <div className="p-4 bg-gray-50 rounded-lg">
+            <div
+              className="p-4 rounded-lg"
+              style={{ backgroundColor: 'var(--theme-input, #f3f4f6)' }}
+            >
               <AltarStyleManager
                 altarStyles={altarStyles}
                 setAltarStyles={setAltarStyles}
@@ -67,9 +72,12 @@ export default function ItemPanel({
 
         <div>
           <button
-            className={`${buttonStyles.base} ${
-              openSection === 'offerings' ? buttonStyles.active : buttonStyles.inactive
-            }`}
+            className={buttonStyles.base}
+            style={{
+              backgroundColor: openSection === 'offerings' ? 'var(--theme-input, #f3f4f6)' : 'var(--theme-card-bg, #fff)',
+              color: 'var(--theme-text, #111827)',
+              border: '1px solid var(--theme-border, #e5e7eb)'
+            }}
             onClick={() => setOpenSection(openSection === 'offerings' ? '' : 'offerings')}
           >
             <span>Offerings</span>
@@ -79,7 +87,10 @@ export default function ItemPanel({
             </span>
           </button>
           {openSection === 'offerings' && (
-            <div className="p-4 bg-gray-50 rounded-lg">
+            <div
+              className="p-4 rounded-lg"
+              style={{ backgroundColor: 'var(--theme-input, #f3f4f6)' }}
+            >
               <OfferingManager
                 offerings={Object.values(offerings).flat()}
                 setOfferings={setOfferings}
@@ -93,9 +104,12 @@ export default function ItemPanel({
 
       {/* Controls for selected item */}
       {selectedIdx !== null && selectedItem && (
-        <div className="bg-gray-50 rounded-lg p-4 space-y-4">
+        <div
+          className="rounded-lg p-4 space-y-4"
+          style={{ backgroundColor: 'var(--theme-input, #f3f4f6)' }}
+        >
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">Resize Selected Item</label>
+            <label className="block text-sm font-medium" style={{ color: 'var(--theme-text, #111827)' }}>Resize Selected Item</label>
             <input
               type="range"
               min="32"
@@ -104,11 +118,11 @@ export default function ItemPanel({
               onChange={onResize}
               className="w-full accent-blue-500"
             />
-            <div className="text-xs text-gray-500 text-right">{resizeValue}px</div>
+            <div className="text-xs text-right" style={{ color: 'var(--theme-border, #888)' }}>{resizeValue}px</div>
           </div>
 
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">Rotate Selected Item</label>
+            <label className="block text-sm font-medium" style={{ color: 'var(--theme-text, #111827)' }}>Rotate Selected Item</label>
             <input
               type="range"
               min="-180"
@@ -117,7 +131,7 @@ export default function ItemPanel({
               onChange={onRotate}
               className="w-full accent-blue-500"
             />
-            <div className="text-xs text-gray-500 text-right">{rotateValue}°</div>
+            <div className="text-xs text-right" style={{ color: 'var(--theme-border, #888)' }}>{rotateValue}°</div>
           </div>
         </div>
       )}

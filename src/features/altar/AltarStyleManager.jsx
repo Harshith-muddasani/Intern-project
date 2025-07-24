@@ -62,12 +62,27 @@ export default function AltarStyleManager({ altarStyles, setAltarStyles, onAdd, 
   };
 
   return (
-    <div className="flex flex-col gap-4 bg-[#fff8f0] border-2 border-orange-200 rounded-2xl p-4 w-full max-w-[240px] min-w-[180px] mx-auto">
+    <div
+      className="flex flex-col gap-4 rounded-2xl p-4 w-full max-w-[240px] min-w-[180px] mx-auto"
+      style={{
+        backgroundColor: 'var(--theme-card-bg, #fff8f0)',
+        border: '2px solid var(--theme-border, #e5e7eb)'
+      }}
+    >
       {/* + Button to show form */}
       <div className="flex items-center mb-2">
-        <span className="font-bold text-orange-500 flex-1 truncate">Altar Styles</span>
+        <span
+          className="font-bold flex-1 truncate"
+          style={{ color: 'var(--theme-accent, #ff5e62)' }}
+        >
+          Altar Styles
+        </span>
         <button
-          className="w-7 h-7 flex items-center justify-center bg-orange-100 text-[#ff5e62] rounded-full shadow hover:bg-orange-200 hover:text-orange-600 transition ml-2"
+          className="w-7 h-7 flex items-center justify-center rounded-full shadow transition ml-2"
+          style={{
+            backgroundColor: 'var(--theme-accent, #ff5e62)10',
+            color: 'var(--theme-accent, #ff5e62)'
+          }}
           title="Add Altar Style"
           onClick={() => setShowForm(v => !v)}
         >
@@ -77,7 +92,7 @@ export default function AltarStyleManager({ altarStyles, setAltarStyles, onAdd, 
       {/* Preview all styles as a compact row */}
       <div className="flex gap-2 overflow-x-auto pb-2 min-h-[56px] items-center max-w-full">
         {altarStyles.length === 0 ? (
-          <span className="text-gray-400 text-xs">No styles yet. Add one below!</span>
+          <span className="text-xs" style={{ color: 'var(--theme-border, #888)' }}>No styles yet. Add one below!</span>
         ) : (
           altarStyles.map((style, idx) => (
             <div
@@ -94,9 +109,10 @@ export default function AltarStyleManager({ altarStyles, setAltarStyles, onAdd, 
                   style={{ maxWidth: '32px', maxHeight: '32px' }}
                 />
               )}
-              <span className="text-[10px] text-blue-700 mt-1 text-center truncate w-10" title={style.name}>{style.name}</span>
+              <span className="text-[10px] mt-1 text-center truncate w-10" style={{ color: 'var(--theme-accent, #4A90E2)' }} title={style.name}>{style.name}</span>
               <button
-                className="mt-1 text-xs text-red-400 hover:text-red-600 focus:outline-none"
+                className="mt-1 text-[10px] px-1 py-0.5 focus:outline-none"
+                style={{ color: 'var(--theme-danger, #ef4444)', fontSize: '10px', minWidth: '16px', height: '16px', lineHeight: '12px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 title="Delete style"
                 onClick={e => { e.stopPropagation(); handleDeleteStyle(idx, style); }}
               >
@@ -108,7 +124,7 @@ export default function AltarStyleManager({ altarStyles, setAltarStyles, onAdd, 
       </div>
       {/* Show manage form only if toggled */}
       {showForm && <>
-        <h3 className="text-lg font-bold text-orange-500 mb-2">Manage Altar Styles</h3>
+        <h3 className="text-lg font-bold mb-2" style={{ color: 'var(--theme-accent, #ff5e62)' }}>Manage Altar Styles</h3>
         <form onSubmit={handleAddStyle} className="flex flex-col gap-2 mb-4">
           <input
             type="text"
@@ -116,26 +132,37 @@ export default function AltarStyleManager({ altarStyles, setAltarStyles, onAdd, 
             value={newStyle.name}
             maxLength={maxNameLength}
             onChange={e => setNewStyle({ ...newStyle, name: e.target.value })}
-            className="px-3 py-2 rounded border-2 border-orange-200 focus:border-orange-400 outline-none bg-white"
+            className="px-3 py-2 rounded border-2 outline-none"
+            style={{
+              backgroundColor: 'var(--theme-input, #fff)',
+              color: 'var(--theme-text, #111827)',
+              borderColor: 'var(--theme-border, #e5e7eb)'
+            }}
             required
           />
           <input
             type="file"
             accept="image/*"
             onChange={handleImageChange}
-            className="px-3 py-2 bg-white"
+            className="px-3 py-2"
+            style={{ backgroundColor: 'var(--theme-input, #fff)', color: 'var(--theme-text, #111827)' }}
             required
           />
           {imagePreview && (
             <img
               src={imagePreview}
               alt="Preview"
-              className="w-12 h-12 object-cover rounded border border-orange-200 bg-white mx-auto"
-              style={{ maxWidth: '48px', maxHeight: '48px' }}
+              className="w-12 h-12 object-cover rounded border mx-auto"
+              style={{
+                maxWidth: '48px',
+                maxHeight: '48px',
+                backgroundColor: 'var(--theme-input, #fff)',
+                borderColor: 'var(--theme-border, #e5e7eb)'
+              }}
             />
           )}
-          {error && <div className="text-red-500 text-xs text-center">{error}</div>}
-          <button type="submit" className="modern-btn">Add Style</button>
+          {error && <div className="text-xs text-center" style={{ color: 'var(--theme-danger, #ef4444)' }}>{error}</div>}
+          <button type="submit" className="modern-btn" style={{ backgroundColor: 'var(--theme-accent, #ff5e62)', color: 'var(--theme-card-bg, #fff)' }}>Add Style</button>
         </form>
       </>}
     </div>

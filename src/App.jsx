@@ -20,6 +20,7 @@ import frame2Img from './assets/Frame1.jpg';
 import { useAuth } from './auth/AuthContext';
 import AuthForm from './pages/AuthForm';
 import UpdatePasswordForm from './pages/UpdatePasswordForm';
+import { ThemeProvider } from './contexts/ThemeContext';
 import {
   getAltarStyles,
   addAltarStyle,
@@ -60,12 +61,41 @@ function RequireAdmin({ user, children }) {
 function PublicLanding() {
   const navigate = useNavigate();
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-orange-50 to-white">
-      <h1 className="text-4xl font-bold mb-6 text-orange-500">Welcome to MiAltar</h1>
-      <p className="mb-8 text-lg text-orange-700">Create, customize, and save your own digital altar experience.</p>
+    <div 
+      className="min-h-screen flex flex-col items-center justify-center transition-colors duration-300"
+      style={{ backgroundColor: 'var(--theme-bg)', color: 'var(--theme-text)' }}
+    >
+      <h1 
+        className="text-4xl font-bold mb-6"
+        style={{ color: 'var(--theme-accent)' }}
+      >
+        Welcome to MiAltar
+      </h1>
+      <p 
+        className="mb-8 text-lg opacity-80"
+        style={{ color: 'var(--theme-text)' }}
+      >
+        Create, customize, and save your own digital altar experience.
+      </p>
       <div className="flex gap-4">
-        <button className="modern-btn" onClick={() => navigate('/login')}>Login</button>
-        <button className="modern-btn" onClick={() => navigate('/register')}>Register</button>
+        <button 
+          className="px-6 py-2 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg text-white"
+          style={{ backgroundColor: 'var(--theme-accent)' }}
+          onClick={() => navigate('/login')}
+        >
+          Login
+        </button>
+        <button 
+          className="px-6 py-2 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg border-2"
+          style={{ 
+            backgroundColor: 'var(--theme-card-bg)', 
+            color: 'var(--theme-text)',
+            borderColor: 'var(--theme-border)'
+          }}
+          onClick={() => navigate('/register')}
+        >
+          Register
+        </button>
       </div>
     </div>
   );
@@ -189,7 +219,15 @@ function App() {
   const [stageHeight, setStageHeight] = useState(FIXED_STAGE_HEIGHT);
 
   const handleAddItem = (src, x = 100, y = 100) => {
-    setItems([...items, { src, x, y, size: 60, rotation: 0 }]);
+    const newItem = { 
+      id: Date.now() + Math.random(), // Unique ID for tracking
+      src, 
+      x: Math.round(x), // Ensure integer coordinates
+      y: Math.round(y), // Ensure integer coordinates
+      size: 60, 
+      rotation: 0 
+    };
+    setItems([...items, newItem]);
   };
 
   // Drag-and-drop handlers
@@ -201,10 +239,23 @@ function App() {
     e.preventDefault();
     const imageSrc = e.dataTransfer.getData('imageSrc');
     if (!imageSrc) return;
-    const altarRect = e.target.getBoundingClientRect();
-    const x = e.clientX - altarRect.left;
-    const y = e.clientY - altarRect.top;
-    handleAddItem(imageSrc, x, y);
+    
+    // Get canvas position relative to the stage
+    const stageElement = stageRef.current?.container();
+    if (stageElement) {
+      const stageRect = stageElement.getBoundingClientRect();
+      const x = Math.round(e.clientX - stageRect.left);
+      const y = Math.round(e.clientY - stageRect.top);
+      
+      // Ensure the item is placed within canvas bounds
+      const clampedX = Math.max(0, Math.min(x, FIXED_STAGE_WIDTH - 60));
+      const clampedY = Math.max(0, Math.min(y, FIXED_STAGE_HEIGHT - 60));
+      
+      handleAddItem(imageSrc, clampedX, clampedY);
+    } else {
+      // Fallback to default position
+      handleAddItem(imageSrc, 100, 100);
+    }
   };
 
   const handleExport = () => {
@@ -228,6 +279,17 @@ function App() {
   const handleDeleteItem = (idx) => {
     setItems(items.filter((_, i) => i !== idx));
     setSelectedIdx(null);
+  };
+
+  // Handle position changes from DraggableItem
+  const handleItemPositionChange = (itemIndex, newX, newY) => {
+    setItems(prevItems => 
+      prevItems.map((item, idx) => 
+        idx === itemIndex 
+          ? { ...item, x: Math.round(newX), y: Math.round(newY) }
+          : item
+      )
+    );
   };
 
   const handleResize = (e) => {
@@ -264,13 +326,23 @@ function App() {
       return;
     }
 
+    // Ensure all items have accurate positions and properties
+    const sanitizedItems = items.map(item => ({
+      ...item,
+      x: Math.round(item.x || 0),
+      y: Math.round(item.y || 0),
+      size: item.size || 60,
+      rotation: item.rotation || 0
+    }));
+
     const newSession = {
       name: sessionName.trim(),
-      items,
+      items: sanitizedItems,
       altarStyle,
       stageWidth: FIXED_STAGE_WIDTH,
       stageHeight: FIXED_STAGE_HEIGHT,
       timestamp: Date.now(),
+      version: '1.0' // For future compatibility
     };
     
     setIsSaving(true); // Disable button
@@ -294,15 +366,27 @@ function App() {
 
   // Load session from backend
   const handleLoadSession = (session) => {
-    setItems(session.items);
-    setAltarStyle(session.altarStyle);
-    if (session.stageWidth && session.stageHeight) {
-      setStageWidth(session.stageWidth);
-      setStageHeight(session.stageHeight);
-    } else {
-      setStageWidth(FIXED_STAGE_WIDTH);
-      setStageHeight(FIXED_STAGE_HEIGHT);
-    }
+    // Ensure loaded items have accurate positions and IDs
+    const restoredItems = (session.items || []).map((item, index) => ({
+      ...item,
+      id: item.id || Date.now() + index, // Ensure unique IDs
+      x: Math.round(item.x || 0),
+      y: Math.round(item.y || 0),
+      size: item.size || 60,
+      rotation: item.rotation || 0
+    }));
+
+    setItems(restoredItems);
+    setAltarStyle(session.altarStyle || 'Clásico');
+    
+    // Always use consistent canvas dimensions
+    setStageWidth(FIXED_STAGE_WIDTH);
+    setStageHeight(FIXED_STAGE_HEIGHT);
+    
+    // Clear selection state
+    setSelectedIdx(null);
+    setResizeValue(60);
+    setRotateValue(0);
   };
 
   // Delete session from backend
@@ -335,46 +419,68 @@ function App() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* Session Naming Dialog */}
-      {showSessionDialog && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-8 w-full max-w-md mx-auto flex flex-col items-center justify-center shadow-xl">
-            <h3 className="text-2xl font-semibold mb-6 text-center text-gray-700 w-full">
-              {t('enterSessionName')}
-            </h3>
-            <input
-              type="text"
-              value={sessionName}
-              onChange={(e) => setSessionName(e.target.value)}
-              placeholder={t('sessionNamePlaceholder')}
-              className="w-4/5 p-3 border border-gray-300 rounded-lg mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500 text-center text-lg"
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') {
-                  handleConfirmSessionName();
-                }
-              }}
-              autoFocus
-            />
-            <div className="flex gap-6 justify-center w-full">
-              <button
-                onClick={handleCancelSessionName}
-                className="px-6 py-2 text-gray-600 hover:text-gray-800 transition-colors border border-gray-200 rounded-lg bg-gray-50"
-                disabled={isSaving}
+    <ThemeProvider>
+      <div className="flex flex-col min-h-screen">
+        {/* Session Naming Dialog */}
+        {showSessionDialog && (
+          <div 
+            className="fixed inset-0 flex items-center justify-center z-50"
+            style={{ backgroundColor: 'var(--theme-overlay)' }}
+          >
+            <div 
+              className="rounded-2xl p-8 w-full max-w-md mx-auto flex flex-col items-center justify-center shadow-xl transition-colors duration-300"
+              style={{ backgroundColor: 'var(--theme-card-bg)' }}
+            >
+              <h3 
+                className="text-2xl font-semibold mb-6 text-center w-full"
+                style={{ color: 'var(--theme-text)' }}
               >
-                {t('cancel')}
-              </button>
-              <button
-                onClick={handleConfirmSessionName}
-                className="modern-btn px-6 py-2 text-lg"
-                disabled={isSaving}
-              >
-                {isSaving ? 'Saving...' : t('confirm')}
-              </button>
+                {t('enterSessionName')}
+              </h3>
+              <input
+                type="text"
+                value={sessionName}
+                onChange={(e) => setSessionName(e.target.value)}
+                placeholder={t('sessionNamePlaceholder')}
+                className="w-4/5 p-3 rounded-xl mb-6 focus:outline-none focus:ring-2 text-center text-lg transition-colors duration-300"
+                style={{ 
+                  backgroundColor: 'var(--theme-input)',
+                  border: `1px solid var(--theme-input-border)`,
+                  color: 'var(--theme-text)',
+                  borderColor: 'var(--theme-accent)'
+                }}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    handleConfirmSessionName();
+                  }
+                }}
+                autoFocus
+              />
+              <div className="flex gap-6 justify-center w-full">
+                <button
+                  onClick={handleCancelSessionName}
+                  className="px-6 py-2 rounded-xl border-2 transition-all duration-300"
+                  style={{ 
+                    color: 'var(--theme-text)',
+                    borderColor: 'var(--theme-border)',
+                    backgroundColor: 'var(--theme-card-bg)'
+                  }}
+                  disabled={isSaving}
+                >
+                  {t('cancel')}
+                </button>
+                <button
+                  onClick={handleConfirmSessionName}
+                  className="px-6 py-2 text-lg rounded-xl shadow-md transition-all duration-300 hover:shadow-lg text-white"
+                  style={{ backgroundColor: 'var(--theme-accent)' }}
+                  disabled={isSaving}
+                >
+                  {isSaving ? 'Saving...' : t('confirm')}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
       {/* Newsletter Dialog */}
       {showNewsletterDialog && (
@@ -426,10 +532,13 @@ function App() {
           <Route path="/" element={
             user ? (
               <RequireAuth user={user}>
-                <div className="flex flex-1 w-full h-full overflow-hidden">
+                <div className="flex flex-1 w-full h-full">
                   <aside 
-                    className="sidebar w-72 min-w-[220px] max-w-xs h-full p-6 overflow-y-auto flex-shrink-0 fixed top-[72px] left-0 z-40" 
-                    style={{ height: 'calc(100vh - 72px)' }}
+                    className="w-72 min-w-[220px] max-w-xs p-6 overflow-y-auto flex-shrink-0 transition-colors duration-300" 
+                    style={{ 
+                      backgroundColor: 'var(--theme-sidebar)',
+                      borderRight: `1px solid var(--theme-border)`
+                    }}
                   >
                     <div className="space-y-6">
                       <ItemPanel
@@ -453,11 +562,22 @@ function App() {
                       />
                     </div>
                   </aside>
-                  <main className="flex-1 flex flex-col items-center justify-center h-full w-full overflow-auto relative" style={{ marginLeft: '18rem' }}>
-                    <h1 className="text-3xl font-bold mb-4 text-center text-gray-700">Welcome, {user.username}!</h1>
+                  <main 
+                    className="flex-1 flex flex-col items-center justify-center h-full w-full overflow-auto relative transition-colors duration-300" 
+                    style={{ 
+                      backgroundColor: 'var(--theme-bg)'
+                    }}
+                  >
+                    <h1 
+                      className="text-3xl font-bold mb-4 text-center"
+                      style={{ color: 'var(--theme-text)' }}
+                    >
+                      Welcome, {user.username}!
+                    </h1>
                     <div
                       id="altar-canvas"
-                      className="bg-white rounded overflow-hidden shadow-md"
+                      className="rounded-2xl overflow-hidden shadow-lg transition-colors duration-300"
+                      style={{ backgroundColor: 'var(--theme-canvas)' }}
                       onDragOver={handleDragOver}
                       onDrop={handleDrop}
                       ref={altarRef}
@@ -467,13 +587,14 @@ function App() {
                           {bgImage && <KonvaImage image={bgImage} width={FIXED_STAGE_WIDTH} height={FIXED_STAGE_HEIGHT} />}
                           {items.map((item, i) => (
                             <DraggableItem
-                              key={i}
+                              key={item.id || i}
                               item={item}
                               stageWidth={FIXED_STAGE_WIDTH}
                               stageHeight={FIXED_STAGE_HEIGHT}
                               isSelected={selectedIdx === i}
                               onSelect={() => handleSelectItem(i)}
                               onDelete={() => handleDeleteItem(i)}
+                              onPositionChange={(newX, newY) => handleItemPositionChange(i, newX, newY)}
                               rotation={item.rotation || 0}
                             />
                           ))}
@@ -481,8 +602,20 @@ function App() {
                       </Stage>
                     </div>
                     <div className="mt-4 flex justify-center gap-4">
-                      <button onClick={handleSaveSession} className="modern-btn">Save Session</button>
-                      <button onClick={handleExport} className="modern-btn">Save Altar as Image</button>
+                      <button 
+                        onClick={handleSaveSession} 
+                        className="px-6 py-2 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg text-white"
+                        style={{ backgroundColor: 'var(--theme-accent)' }}
+                      >
+                        Save Session
+                      </button>
+                      <button 
+                        onClick={handleExport} 
+                        className="px-6 py-2 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg text-white"
+                        style={{ backgroundColor: 'var(--theme-accent)' }}
+                      >
+                        Save Altar as Image
+                      </button>
                     </div>
                   </main>
                 </div>
@@ -494,7 +627,8 @@ function App() {
           <Route path="*" element={<LoginForm />} />
         </Routes>
       </MainLayout>
-    </div>
+      </div>
+    </ThemeProvider>
   );
 }
 

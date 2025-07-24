@@ -4,8 +4,8 @@
 
 /* General App Styles */
 body {
-  background-color: #F9FAFB; /* Soft Light Gray */
-  color: #374151; /* Softer Charcoal for text */
+  margin: 0;
+  padding: 0;
 }
 
 /* Sidebar Styling */

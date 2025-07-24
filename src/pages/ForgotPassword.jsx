@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Button from '../components/ui/Button';
 
 const API_URL = 'http://localhost:4000';
 
@@ -45,37 +46,87 @@ export default function ForgotPassword() {
     setLoading(false);
   };
 
+  const inputStyle = {
+    backgroundColor: 'var(--theme-input)',
+    borderColor: 'var(--theme-input-border)',
+    color: 'var(--theme-text)'
+  };
+
+  const handleFocus = (e) => {
+    e.target.style.borderColor = 'var(--theme-accent)';
+  };
+
+  const handleBlur = (e) => {
+    e.target.style.borderColor = 'var(--theme-input-border)';
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="modern-panel p-8 flex flex-col items-center shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-gray-700">Forgot Password</h2>
-        <p className="mb-4 text-sm text-gray-600 text-center">Enter your username or email and we'll send you a link to reset your password.</p>
+    <div 
+      className="min-h-screen flex items-center justify-center transition-colors duration-300"
+      style={{ backgroundColor: 'var(--theme-bg)' }}
+    >
+      <div 
+        className="w-[90%] max-w-md mx-auto mt-20 p-6 rounded-2xl shadow-lg transition-all duration-300"
+        style={{ backgroundColor: 'var(--theme-card-bg)' }}
+      >
+        <h2 
+          className="text-2xl font-bold mb-6 text-center"
+          style={{ color: 'var(--theme-text)' }}
+        >
+          Forgot Password
+        </h2>
+        <p 
+          className="mb-6 text-sm text-center opacity-80"
+          style={{ color: 'var(--theme-text)' }}
+        >
+          Enter your username or email and we'll send you a link to reset your password.
+        </p>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
           <input
             type="text"
             placeholder="Username"
             value={username}
             onChange={e => setUsername(e.target.value)}
-            className="px-4 py-2 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+            className="px-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 transition-all duration-300"
+            style={inputStyle}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
           />
-          <div className="text-center text-gray-500 text-sm">or</div>
+          <div 
+            className="text-center text-sm opacity-60"
+            style={{ color: 'var(--theme-text)' }}
+          >
+            or
+          </div>
           <input
             type="email"
             placeholder="Email"
             value={email}
             onChange={e => setEmail(e.target.value)}
-            className="px-4 py-2 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+            className="px-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 transition-all duration-300"
+            style={inputStyle}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
             autoComplete="email"
           />
-          {error && <div className="text-red-500 text-sm text-center">{error}</div>}
-          {message && <div className="text-green-600 text-sm text-center">{message}</div>}
-          <button type="submit" className="modern-btn w-full mt-2" disabled={loading}>
+          {error && (
+            <div className="text-red-500 text-sm text-center p-2 rounded-lg bg-red-50">
+              {error}
+            </div>
+          )}
+          {message && (
+            <div className="text-green-600 text-sm text-center p-2 rounded-lg bg-green-50">
+              {message}
+            </div>
+          )}
+          <Button type="submit" className="w-full mt-2" disabled={loading} size="lg">
             {loading ? 'Please wait...' : 'Send Reset Link'}
-          </button>
+          </Button>
         </form>
-        <div className="mt-4 text-sm">
+        <div className="mt-6 text-sm text-center">
           <button
-            className="text-blue-600 hover:underline font-semibold"
+            className="font-semibold hover:underline transition-colors duration-200"
+            style={{ color: 'var(--theme-accent)' }}
             onClick={() => navigate('/login')}
           >
             Back to Login

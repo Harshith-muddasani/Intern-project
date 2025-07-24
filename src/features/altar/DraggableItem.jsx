@@ -3,24 +3,24 @@ import { Image as KonvaImage, Group, Rect } from 'react-konva';
 import useImage from 'use-image';
 import dustbin from '../../assets/dustbin.png';
 
-export default function DraggableItem({ item, stageWidth = 400, stageHeight = 300, isSelected, onSelect, pulse, onDelete, rotation = 0 }) {
+export default function DraggableItem({ 
+  item, 
+  stageWidth = 400, 
+  stageHeight = 300, 
+  isSelected, 
+  onSelect, 
+  pulse, 
+  onDelete, 
+  onPositionChange,
+  rotation = 0 
+}) {
   const [image] = useImage(item.src);
   const [dustbinImg] = useImage(dustbin);
   const width = item.size || 60;
   const height = item.size || 60;
 
-  // Position state, synced with props
-  const [position, setPosition] = useState({ x: item.x, y: item.y });
-
-  // Sync position with props when item.x or item.y changes (e.g., after resize)
-  useEffect(() => {
-    setPosition({ x: item.x, y: item.y });
-  }, [item.x, item.y]);
-
-  // Clamp function
+  // Clamp function to keep items within canvas bounds
   const clamp = (value, min, max) => Math.max(min, Math.min(value, max));
-
-  // Remove the useEffect that clamps position on mount/resize
 
   // Add Konva filter for pulse-glow if selected
   const extraProps = {};
@@ -33,14 +33,18 @@ export default function DraggableItem({ item, stageWidth = 400, stageHeight = 30
 
   return (
     <Group
-      x={position.x}
-      y={position.y}
+      x={item.x}
+      y={item.y}
       draggable
       onDragEnd={e => {
         // Clamp position so image stays inside canvas
         const newX = clamp(e.target.x(), 0, stageWidth - width);
         const newY = clamp(e.target.y(), 0, stageHeight - height);
-        setPosition({ x: newX, y: newY });
+        
+        // Update parent component with new position
+        if (onPositionChange) {
+          onPositionChange(newX, newY);
+        }
       }}
       onClick={onSelect}
     >
