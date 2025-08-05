@@ -8,18 +8,21 @@ body {
   padding: 0;
 }
 
-/* Sidebar Styling */
-.sidebar {
-  background-color: white;
-  border-right: 1px solid #E5E7EB; /* Cool Gray */
+/* Sidebar Styling - Consistent with dark theme */
+.dark-sidebar {
+  background-color: var(--theme-card-bg, #171717);
+  border-right: 1px solid var(--theme-border, #333);
+  color: var(--theme-text, #d3d3d3);
+  min-height: 100vh;
+  padding: 2rem 1rem;
 }
 
 /* Hide scrollbar but keep scroll functionality */
-.sidebar::-webkit-scrollbar {
+.dark-sidebar::-webkit-scrollbar {
   display: none;
 }
 
-.sidebar {
+.dark-sidebar {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }

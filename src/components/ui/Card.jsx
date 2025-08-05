@@ -1,8 +1,12 @@
 import React from 'react';
+import '../../styles/DarkUI.css';
 
-const Card = ({ children, ...props }) => {
+const Card = ({ children, className = '', ...props }) => {
   return (
-    <div className="bg-white shadow-md rounded-xl p-6" {...props}>
+    <div
+      className={`dark-card ${className}`}
+      {...props}
+    >
       {children}
     </div>
   );

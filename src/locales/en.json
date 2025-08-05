@@ -29,6 +29,29 @@
     "enterSessionName": "Enter session name",
     "sessionNamePlaceholder": "My Altar Session",
     "cancel": "Cancel",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "languageSelector": "Select Language",
+    "english": "English",
+    "hindi": "Hindi", 
+    "spanish": "Spanish",
+    "register": "Register",
+    "forgotPassword": "Forgot Password?",
+    "resetPassword": "Reset Password",
+    "createAccount": "Create Account",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "validation": {
+      "required": "This field is required",
+      "emailInvalid": "Please enter a valid email address",
+      "passwordTooShort": "Password must be at least 6 characters",
+      "passwordsDoNotMatch": "Passwords do not match"
+    },
+    "navigation": {
+      "home": "Home",
+      "sessions": "Sessions", 
+      "admin": "Admin",
+      "settings": "Settings"
+    }
   }
   

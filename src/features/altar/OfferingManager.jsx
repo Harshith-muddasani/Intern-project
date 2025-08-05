@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import '../../styles/DarkUI.css';
 
 export default function OfferingManager({ offerings, setOfferings, onAdd, onDelete, category }) {
   const [newOffering, setNewOffering] = useState({ name: '', image: null, category: '' });
@@ -71,37 +72,24 @@ export default function OfferingManager({ offerings, setOfferings, onAdd, onDele
   };
 
   return (
-    <div
-      className="flex flex-col gap-4 rounded-2xl p-4 w-full max-w-[240px] min-w-[180px] mx-auto"
-      style={{
-        backgroundColor: 'var(--theme-card-bg, #fff8f0)',
-        border: '2px solid var(--theme-border, #e5e7eb)'
-      }}
-    >
+    <div className="flex flex-col gap-4 rounded-2xl p-4 w-full max-w-[240px] min-w-[180px] mx-auto dark-panel">
       {/* + Button to show form */}
       <div className="flex items-center mb-2">
-        <span
-          className="font-bold flex-1 truncate"
-          style={{ color: 'var(--theme-accent, #ff5e62)' }}
-        >
+        <span className="font-bold flex-1 truncate dark-text">
           Offerings
         </span>
-        <button
-          className="w-7 h-7 flex items-center justify-center rounded-full shadow transition ml-2"
-          style={{
-            backgroundColor: 'var(--theme-accent, #ff5e62)10',
-            color: 'var(--theme-accent, #ff5e62)'
-          }}
-          title="Add Offering"
-          onClick={() => setShowForm(v => !v)}
-        >
-          {showForm ? '×' : '+'}
-        </button>
+                 <button
+           className="w-7 h-7 flex items-center justify-center rounded-full shadow transition ml-2 dark-button"
+           title="Add Offering"
+           onClick={() => setShowForm(v => !v)}
+         >
+           {showForm ? '×' : '+'}
+         </button>
       </div>
       {/* Preview all offerings as a grid */}
       <div className="grid grid-cols-3 gap-3 pb-2 min-h-[96px] items-center w-full">
         {(Array.isArray(offerings) ? offerings : []).length === 0 ? (
-          <span className="text-xs col-span-3" style={{ color: 'var(--theme-border, #888)' }}>No offerings yet. Add one below!</span>
+          <span className="text-xs col-span-3 dark-text-muted">No offerings yet. Add one below!</span>
         ) : (
           (Array.isArray(offerings) ? offerings : []).map((offering, idx) => (
             <div key={idx} className="flex flex-col items-center w-[64px] h-[90px] p-2 justify-center">
@@ -118,76 +106,63 @@ export default function OfferingManager({ offerings, setOfferings, onAdd, onDele
                   title="Drag to altar"
                 />
               )}
-              <span className="text-xs text-center truncate w-12" style={{ color: 'var(--theme-accent, #4A90E2)' }} title={offering.name}>{offering.name}</span>
-              <button
-                className="mt-1 text-[10px] px-1 py-0.5 focus:outline-none"
-                style={{ color: 'var(--theme-danger, #ef4444)', fontSize: '10px', minWidth: '16px', height: '16px', lineHeight: '12px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                title="Delete offering"
-                onClick={e => { e.stopPropagation(); handleDeleteOffering(idx, offering); }}
-              >
-                -
-              </button>
+                             <span className="text-xs text-center truncate w-12 dark-text" title={offering.name}>{offering.name}</span>
+                             <button
+                 className="mt-1 text-[10px] px-1 py-0.5 focus:outline-none dark-button danger"
+                 style={{ fontSize: '10px', minWidth: '16px', height: '16px', lineHeight: '12px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                 title="Delete offering"
+                 onClick={e => { e.stopPropagation(); handleDeleteOffering(idx, offering); }}
+               >
+                 -
+               </button>
             </div>
           ))
         )}
       </div>
       {/* Show manage form only if toggled */}
       {showForm && <>
-        <h3 className="text-lg font-bold mb-2" style={{ color: 'var(--theme-accent, #ff5e62)' }}>Manage Offerings</h3>
+                 <h3 className="text-lg font-bold mb-2 dark-text">Manage Offerings</h3>
         <form onSubmit={handleAddOffering} className="flex flex-col gap-2 mb-4">
-          <input
-            type="text"
-            placeholder="Offering Name"
-            value={newOffering.name}
-            maxLength={maxNameLength}
-            onChange={e => setNewOffering({ ...newOffering, name: e.target.value })}
-            className="px-3 py-2 rounded border-2 outline-none"
-            style={{
-              backgroundColor: 'var(--theme-input, #fff)',
-              color: 'var(--theme-text, #111827)',
-              borderColor: 'var(--theme-border, #e5e7eb)'
-            }}
-            required
-          />
+                     <input
+             type="text"
+             placeholder="Offering Name"
+             value={newOffering.name}
+             maxLength={maxNameLength}
+             onChange={e => setNewOffering({ ...newOffering, name: e.target.value })}
+             className="px-3 py-2 rounded border-2 outline-none dark-input"
+             required
+           />
           {/* Only show category input if category prop is not provided */}
           {(!category || category === "") && (
-            <input
-              type="text"
-              placeholder="Category"
-              value={newOffering.category}
-              onChange={e => setNewOffering({ ...newOffering, category: e.target.value })}
-              className="px-3 py-2 rounded border-2 outline-none"
-              style={{
-                backgroundColor: 'var(--theme-input, #fff)',
-                color: 'var(--theme-text, #111827)',
-                borderColor: 'var(--theme-border, #e5e7eb)'
-              }}
-              required
-            />
+                         <input
+               type="text"
+               placeholder="Category"
+               value={newOffering.category}
+               onChange={e => setNewOffering({ ...newOffering, category: e.target.value })}
+               className="px-3 py-2 rounded border-2 outline-none dark-input"
+               required
+             />
           )}
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="px-3 py-2"
-            style={{ backgroundColor: 'var(--theme-input, #fff)', color: 'var(--theme-text, #111827)' }}
-            required
-          />
+                     <input
+             type="file"
+             accept="image/*"
+             onChange={handleImageChange}
+             className="px-3 py-2 dark-input"
+             required
+           />
           {imagePreview && (
-            <img
-              src={imagePreview}
-              alt="Preview"
-              className="w-12 h-12 object-cover rounded border mx-auto"
-              style={{
-                maxWidth: '48px',
-                maxHeight: '48px',
-                backgroundColor: 'var(--theme-input, #fff)',
-                borderColor: 'var(--theme-border, #e5e7eb)'
-              }}
-            />
+                         <img
+               src={imagePreview}
+               alt="Preview"
+               className="w-12 h-12 object-cover rounded border mx-auto"
+               style={{
+                 maxWidth: '48px',
+                 maxHeight: '48px'
+               }}
+             />
           )}
-          {error && <div className="text-xs text-center" style={{ color: 'var(--theme-danger, #ef4444)' }}>{error}</div>}
-          <button type="submit" className="modern-btn" style={{ backgroundColor: 'var(--theme-accent, #ff5e62)', color: 'var(--theme-card-bg, #fff)' }}>Add Offering</button>
+                     {error && <div className="text-xs text-center dark-text-muted">{error}</div>}
+                     <button type="submit" className="dark-button primary">Add Offering</button>
         </form>
       </>}
     </div>

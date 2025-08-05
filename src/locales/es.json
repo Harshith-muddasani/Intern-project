@@ -29,5 +29,28 @@
   "enterSessionName": "Ingresa el nombre de la sesión",
   "sessionNamePlaceholder": "Mi Sesión de Altar",
   "cancel": "Cancelar",
-  "confirm": "Confirmar"
+  "confirm": "Confirmar",
+  "languageSelector": "Seleccionar idioma",
+  "english": "Inglés",
+  "hindi": "Hindi",
+  "spanish": "Español",
+  "register": "Registrarse",
+  "forgotPassword": "¿Olvidaste tu contraseña?",
+  "resetPassword": "Restablecer contraseña",
+  "createAccount": "Crear cuenta",
+  "loading": "Cargando...",
+  "error": "Error",
+  "success": "Éxito",
+  "validation": {
+    "required": "Este campo es obligatorio",
+    "emailInvalid": "Por favor ingresa un email válido",
+    "passwordTooShort": "La contraseña debe tener al menos 6 caracteres",
+    "passwordsDoNotMatch": "Las contraseñas no coinciden"
+  },
+  "navigation": {
+    "home": "Inicio",
+    "sessions": "Sesiones",
+    "admin": "Administrador",
+    "settings": "Configuración"
+  }
 } 

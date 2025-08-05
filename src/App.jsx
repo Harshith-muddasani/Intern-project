@@ -17,10 +17,10 @@ import Navbar from './components/Navbar';
 import { useTranslation } from 'react-i18next';
 import frame1Img from './assets/Frame1.png';
 import frame2Img from './assets/Frame1.jpg';
-import { useAuth } from './auth/AuthContext';
+import { useAuth } from './hooks/useAuth';
 import AuthForm from './pages/AuthForm';
 import UpdatePasswordForm from './pages/UpdatePasswordForm';
-import { ThemeProvider } from './contexts/ThemeContext';
+import './styles/DarkUI.css';
 import {
   getAltarStyles,
   addAltarStyle,
@@ -41,6 +41,8 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import NewsletterDialog from './features/admin/NewsletterDialog'; // Import the new component
 import MainLayout from './components/MainLayout'; // Import the new component
+import PublicAltarView from './pages/PublicAltarView';
+import SharingSettings from './pages/SharingSettings';
 
 const backgrounds = {
   'Clásico': altarClassic,
@@ -59,6 +61,7 @@ function RequireAdmin({ user, children }) {
 }
 
 function PublicLanding() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   return (
     <div 
@@ -69,7 +72,7 @@ function PublicLanding() {
         className="text-4xl font-bold mb-6"
         style={{ color: 'var(--theme-accent)' }}
       >
-        Welcome to MiAltar
+        {t('welcome')}
       </h1>
       <p 
         className="mb-8 text-lg opacity-80"
@@ -79,22 +82,35 @@ function PublicLanding() {
       </p>
       <div className="flex gap-4">
         <button 
-          className="px-6 py-2 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg text-white"
-          style={{ backgroundColor: 'var(--theme-accent)' }}
+          style={{
+            padding: '0.5rem 1.5rem',
+            borderRadius: '0.75rem',
+            backgroundColor: '#3B82F6',
+            color: 'white',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            fontSize: '1rem',
+            border: 'none',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+          }}
           onClick={() => navigate('/login')}
         >
-          Login
+          {t('login')}
         </button>
         <button 
-          className="px-6 py-2 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg border-2"
-          style={{ 
-            backgroundColor: 'var(--theme-card-bg)', 
-            color: 'var(--theme-text)',
-            borderColor: 'var(--theme-border)'
+          style={{
+            padding: '0.5rem 1.5rem',
+            borderRadius: '0.75rem',
+            backgroundColor: '#171717',
+            color: 'white',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            fontSize: '1rem',
+            border: '2px solid #333'
           }}
           onClick={() => navigate('/register')}
         >
-          Register
+          {t('register')}
         </button>
       </div>
     </div>
@@ -419,68 +435,103 @@ function App() {
   }
 
   return (
-    <ThemeProvider>
-      <div className="flex flex-col min-h-screen">
-        {/* Session Naming Dialog */}
-        {showSessionDialog && (
+    <>
+      {/* Session Naming Dialog */}
+      {showSessionDialog && (
+        <div 
+          style={{ 
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999
+          }}
+        >
           <div 
-            className="fixed inset-0 flex items-center justify-center z-50"
-            style={{ backgroundColor: 'var(--theme-overlay)' }}
+            style={{
+              backgroundColor: '#171717',
+              borderRadius: '20px',
+              padding: '2rem',
+              border: '1px solid #333',
+              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)',
+              width: '100%',
+              maxWidth: '400px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
           >
-            <div 
-              className="rounded-2xl p-8 w-full max-w-md mx-auto flex flex-col items-center justify-center shadow-xl transition-colors duration-300"
-              style={{ backgroundColor: 'var(--theme-card-bg)' }}
-            >
-              <h3 
-                className="text-2xl font-semibold mb-6 text-center w-full"
-                style={{ color: 'var(--theme-text)' }}
+            <h3 className="dark-text text-2xl font-semibold mb-6 text-center w-full">
+              {t('enterSessionName')}
+            </h3>
+            <input
+              type="text"
+              value={sessionName}
+              onChange={(e) => setSessionName(e.target.value)}
+              placeholder={t('sessionNamePlaceholder')}
+              style={{
+                width: '80%',
+                marginBottom: '1.5rem',
+                textAlign: 'center',
+                fontSize: '1.125rem',
+                padding: '0.75rem 1rem',
+                borderRadius: '0.5rem',
+                border: '2px solid #333',
+                backgroundColor: '#171717',
+                color: '#d3d3d3',
+                outline: 'none'
+              }}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  handleConfirmSessionName();
+                }
+              }}
+              autoFocus
+            />
+            <div className="flex gap-6 justify-center w-full">
+              <button
+                onClick={handleCancelSessionName}
+                style={{
+                  padding: '0.5rem 1.5rem',
+                  borderRadius: '0.75rem',
+                  border: '2px solid #333',
+                  backgroundColor: '#252525',
+                  color: 'white',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  fontSize: '1rem'
+                }}
+                disabled={isSaving}
               >
-                {t('enterSessionName')}
-              </h3>
-              <input
-                type="text"
-                value={sessionName}
-                onChange={(e) => setSessionName(e.target.value)}
-                placeholder={t('sessionNamePlaceholder')}
-                className="w-4/5 p-3 rounded-xl mb-6 focus:outline-none focus:ring-2 text-center text-lg transition-colors duration-300"
-                style={{ 
-                  backgroundColor: 'var(--theme-input)',
-                  border: `1px solid var(--theme-input-border)`,
-                  color: 'var(--theme-text)',
-                  borderColor: 'var(--theme-accent)'
+                {t('cancel')}
+              </button>
+              <button
+                onClick={handleConfirmSessionName}
+                style={{
+                  padding: '0.5rem 1.5rem',
+                  borderRadius: '0.75rem',
+                  backgroundColor: '#3B82F6',
+                  color: 'white',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  fontSize: '1.125rem',
+                  border: 'none',
+                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
                 }}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    handleConfirmSessionName();
-                  }
-                }}
-                autoFocus
-              />
-              <div className="flex gap-6 justify-center w-full">
-                <button
-                  onClick={handleCancelSessionName}
-                  className="px-6 py-2 rounded-xl border-2 transition-all duration-300"
-                  style={{ 
-                    color: 'var(--theme-text)',
-                    borderColor: 'var(--theme-border)',
-                    backgroundColor: 'var(--theme-card-bg)'
-                  }}
-                  disabled={isSaving}
-                >
-                  {t('cancel')}
-                </button>
-                <button
-                  onClick={handleConfirmSessionName}
-                  className="px-6 py-2 text-lg rounded-xl shadow-md transition-all duration-300 hover:shadow-lg text-white"
-                  style={{ backgroundColor: 'var(--theme-accent)' }}
-                  disabled={isSaving}
-                >
-                  {isSaving ? 'Saving...' : t('confirm')}
-                </button>
-              </div>
+                disabled={isSaving}
+              >
+                {isSaving ? 'Saving...' : t('confirm')}
+              </button>
             </div>
           </div>
-        )}
+        </div>
+      )}
 
       {/* Newsletter Dialog */}
       {showNewsletterDialog && (
@@ -490,15 +541,26 @@ function App() {
         />
       )}
 
-      <MainLayout onSendNewsletter={handleSendNewsletter}>
+      <div className="min-h-screen" style={{ backgroundColor: '#0a0a0a' }}>
+        {/* Update Password Modal (only for /profile route) */}
+        <Routes>
+          <Route path="/profile" element={
+            <RequireAuth user={user}>
+              <UpdatePasswordForm />
+            </RequireAuth>
+          } />
+        </Routes>
+
+        <MainLayout onSendNewsletter={handleSendNewsletter}>
         <Routes>
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/profile" element={
+          <Route path="/public/altar/:shareId" element={<PublicAltarView />} />
+          <Route path="/sharing" element={
             <RequireAuth user={user}>
-              <UpdatePasswordForm />
+              <SharingSettings />
             </RequireAuth>
           } />
           <Route path="/sessions" element={
@@ -515,7 +577,21 @@ function App() {
                     "Altar Style": s.altarStyle,
                     Actions: (
                       <div className="flex gap-6">
-                        <button className="text-xs px-2 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200" onClick={() => { handleLoadSession(s); navigate('/'); }}>Load</button>
+                        <button 
+                          style={{
+                            fontSize: '0.75rem',
+                            padding: '0.25rem 0.5rem',
+                            backgroundColor: '#3B82F6',
+                            color: 'white',
+                            borderRadius: '0.25rem',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease',
+                            border: 'none'
+                          }}
+                          onClick={() => { handleLoadSession(s); navigate('/'); }}
+                        >
+                          Load
+                        </button>
                         <button className="text-xs px-2 py-1 bg-red-100 text-red-600 rounded hover:bg-red-200" onClick={() => handleDeleteSession(s.name)}>Delete</button>
                       </div>
                     )
@@ -534,10 +610,11 @@ function App() {
               <RequireAuth user={user}>
                 <div className="flex flex-1 w-full h-full">
                   <aside 
-                    className="w-72 min-w-[220px] max-w-xs p-6 overflow-y-auto flex-shrink-0 transition-colors duration-300" 
+                    className="w-72 min-w-[220px] max-w-xs p-6 overflow-y-auto flex-shrink-0 transition-colors duration-300 dark-sidebar" 
                     style={{ 
-                      backgroundColor: 'var(--theme-sidebar)',
-                      borderRight: `1px solid var(--theme-border)`
+                      backgroundColor: 'var(--theme-card-bg, #171717)',
+                      borderRight: `1px solid var(--theme-border, #333)`,
+                      color: 'var(--theme-text, #d3d3d3)'
                     }}
                   >
                     <div className="space-y-6">
@@ -601,22 +678,55 @@ function App() {
                         </Layer>
                       </Stage>
                     </div>
-                    <div className="mt-4 flex justify-center gap-4">
-                      <button 
-                        onClick={handleSaveSession} 
-                        className="px-6 py-2 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg text-white"
-                        style={{ backgroundColor: 'var(--theme-accent)' }}
-                      >
-                        Save Session
-                      </button>
-                      <button 
-                        onClick={handleExport} 
-                        className="px-6 py-2 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg text-white"
-                        style={{ backgroundColor: 'var(--theme-accent)' }}
-                      >
-                        Save Altar as Image
-                      </button>
-                    </div>
+                                            <div className="mt-4 flex justify-center gap-4 flex-wrap">
+                          <button
+                            onClick={handleSaveSession}
+                            style={{
+                              padding: '0.5rem 1.5rem',
+                              borderRadius: '0.75rem',
+                              backgroundColor: '#3B82F6',
+                              color: 'white',
+                              cursor: 'pointer',
+                              transition: 'all 0.3s ease',
+                              fontSize: '1rem',
+                              border: 'none',
+                              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                            }}
+                          >
+                            {t('saveSession')}
+                          </button>
+                          <button
+                            onClick={handleExport}
+                            style={{
+                              padding: '0.5rem 1.5rem',
+                              borderRadius: '0.75rem',
+                              backgroundColor: '#3B82F6',
+                              color: 'white',
+                              cursor: 'pointer',
+                              transition: 'all 0.3s ease',
+                              fontSize: '1rem',
+                              border: 'none',
+                              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                            }}
+                          >
+                            {t('saveAltar')}
+                          </button>
+                          <button
+                            onClick={() => navigate('/sharing')}
+                            style={{
+                              padding: '0.5rem 1.5rem',
+                              borderRadius: '0.75rem',
+                              backgroundColor: '#171717',
+                              color: 'white',
+                              cursor: 'pointer',
+                              transition: 'all 0.3s ease',
+                              fontSize: '1rem',
+                              border: '2px solid #333'
+                            }}
+                          >
+                            Share Altar
+                          </button>
+                        </div>
                   </main>
                 </div>
               </RequireAuth>
@@ -626,9 +736,9 @@ function App() {
           } />
           <Route path="*" element={<LoginForm />} />
         </Routes>
-      </MainLayout>
+        </MainLayout>
       </div>
-    </ThemeProvider>
+    </>
   );
 }
 
