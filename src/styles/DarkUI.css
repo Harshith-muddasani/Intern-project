@@ -1,0 +1,154 @@
+/* Dark UI Components - Consistent with Auth Forms */
+
+.dark-card {
+  background-color: #171717;
+  border-radius: 25px;
+  padding: 2em;
+  transition: .4s ease-in-out;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.dark-card:hover {
+  transform: scale(1.02);
+  border: 1px solid #333;
+}
+
+.dark-button {
+  padding: 0.75em 1.5em;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  transition: .4s ease-in-out;
+  background-color: #252525;
+  color: white;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.dark-button:hover {
+  background-color: #333;
+  color: white;
+}
+
+.dark-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.dark-button.primary {
+  background-color: #3B82F6;
+}
+
+.dark-button.primary:hover {
+  background-color: #2563EB;
+}
+
+.dark-button.danger {
+  background-color: #dc2626;
+}
+
+.dark-button.danger:hover {
+  background-color: #b91c1c;
+}
+
+.dark-input {
+  background-color: #171717;
+  border: 2px solid #333;
+  border-radius: 12px;
+  padding: 0.75em 1em;
+  color: #d3d3d3;
+  outline: none;
+  transition: .3s ease-in-out;
+  width: 100%;
+}
+
+.dark-input:focus {
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.dark-input::placeholder {
+  color: #888;
+}
+
+.dark-navbar {
+  background-color: #171717;
+  border-bottom: 1px solid #333;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dark-sidebar {
+  background-color: #171717;
+  border-right: 1px solid #333;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+
+.dark-panel {
+  background-color: #1a1a1a;
+  border-radius: 15px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  border: 1px solid #333;
+}
+
+.dark-text {
+  color: #d3d3d3;
+}
+
+.dark-text-muted {
+  color: #888;
+}
+
+.dark-link {
+  color: #3B82F6;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.dark-link:hover {
+  color: #2563EB;
+  text-decoration: underline;
+}
+
+.dark-modal {
+  background-color: #171717;
+  border-radius: 20px;
+  padding: 2rem;
+  border: 1px solid #333;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.dark-table {
+  background-color: #171717;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #333;
+}
+
+.dark-table th {
+  background-color: #252525;
+  color: #d3d3d3;
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #333;
+}
+
+.dark-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #333;
+  color: #d3d3d3;
+}
+
+.dark-table tr:hover {
+  background-color: #252525;
+}
+
+.dark-canvas {
+  background-color: #0a0a0a;
+  border-radius: 15px;
+  border: 2px solid #333;
+}

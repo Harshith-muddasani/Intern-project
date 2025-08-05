@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { sendNewsletter, getAllUsers } from '../../auth/api';
+import '../../styles/DarkUI.css';
 
 export default function NewsletterDialog({ token, onClose }) {
   const [subject, setSubject] = useState('');
@@ -62,24 +63,50 @@ export default function NewsletterDialog({ token, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-8 w-full max-w-2xl mx-auto flex flex-col shadow-xl">
-        <h3 className="text-2xl font-semibold mb-6 text-center text-orange-600 w-full">
+    <div 
+      style={{ 
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 9999
+      }}
+    >
+      <div 
+        style={{
+          backgroundColor: '#171717',
+          borderRadius: '1rem',
+          padding: '2rem',
+          width: '100%',
+          maxWidth: '42rem',
+          display: 'flex',
+          flexDirection: 'column',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+          border: '1px solid #333'
+        }}
+      >
+        <h3 className="text-2xl font-semibold mb-6 text-center w-full dark-text">
           Send Newsletter
         </h3>
         <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full">
           {/* Recipient Selection */}
-          <div className="border-2 border-orange-200 rounded-lg p-4">
-            <h4 className="font-semibold text-lg mb-2 text-orange-500">Recipients</h4>
+          <div className="rounded-lg p-4 dark-panel">
+            <h4 className="font-semibold text-lg mb-2 dark-text">Recipients</h4>
             <div className="flex items-center mb-2">
               <input
                 type="checkbox"
                 id="select-all"
                 onChange={handleSelectAll}
                 checked={users.length > 0 && selectedUsers.length === users.length}
-                className="h-5 w-5 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+                className="h-5 w-5 rounded border-gray-300 focus:ring-2"
+                style={{ accentColor: 'var(--theme-accent)' }}
               />
-              <label htmlFor="select-all" className="ml-2 font-bold">Select All</label>
+              <label htmlFor="select-all" className="ml-2 font-bold dark-text">Select All</label>
             </div>
             <div className="max-h-48 overflow-y-auto pr-2">
               {users.map(user => (
@@ -89,9 +116,10 @@ export default function NewsletterDialog({ token, onClose }) {
                     id={user.email}
                     checked={selectedUsers.includes(user.email)}
                     onChange={(e) => handleUserSelect(e, user.email)}
-                    className="h-5 w-5 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+                    className="h-5 w-5 rounded border-gray-300 focus:ring-2"
+                    style={{ accentColor: 'var(--theme-accent)' }}
                   />
-                  <label htmlFor={user.email} className="ml-2 text-gray-700">{user.username} ({user.email})</label>
+                  <label htmlFor={user.email} className="ml-2 dark-text">{user.username} ({user.email})</label>
                 </div>
               ))}
             </div>
@@ -102,31 +130,50 @@ export default function NewsletterDialog({ token, onClose }) {
             placeholder="Subject"
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
-            className="px-5 py-3 rounded border-2 border-orange-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none text-lg"
+            className="px-5 py-3 rounded border-2 outline-none text-lg dark-input"
             required
           />
           <textarea
             placeholder="Content (HTML is supported)"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="px-5 py-3 rounded border-2 border-orange-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none text-lg"
+            className="px-5 py-3 rounded border-2 outline-none text-lg dark-input"
             rows="6"
             required
           />
-          {error && <div className="text-red-500 text-sm text-center">{error}</div>}
-          {success && <div className="text-green-500 text-sm text-center">{success}</div>}
+          {error && <div className="text-sm text-center dark-text-muted">{error}</div>}
+          {success && <div className="text-sm text-center dark-text-muted">{success}</div>}
           <div className="flex gap-6 justify-center w-full">
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-2 text-gray-600 hover:text-gray-800 transition-colors border border-gray-200 rounded-lg bg-gray-50"
+              style={{
+                padding: '0.5rem 1.5rem',
+                borderRadius: '0.75rem',
+                border: '2px solid #333',
+                backgroundColor: '#252525',
+                color: 'white',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                fontSize: '1rem'
+              }}
               disabled={loading}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="modern-btn px-6 py-2 text-lg"
+              style={{
+                padding: '0.5rem 1.5rem',
+                borderRadius: '0.75rem',
+                backgroundColor: '#3B82F6',
+                color: 'white',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                fontSize: '1.125rem',
+                border: 'none',
+                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+              }}
               disabled={loading || selectedUsers.length === 0}
             >
               {loading ? 'Sending...' : `Send to ${selectedUsers.length} user(s)`}

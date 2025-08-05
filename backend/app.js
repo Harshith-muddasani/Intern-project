@@ -8,6 +8,7 @@ import sessionRoutes from './routes/sessionRoutes.js';
 import altarStyleRoutes from './routes/altarStyleRoutes.js';
 import offeringRoutes from './routes/offeringRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import sharingRoutes from './routes/sharingRoutes.js';
 import errorHandler from './middlewares/errorHandler.js';
 
 dotenv.config();
@@ -22,6 +23,9 @@ app.use('/sessions', sessionRoutes);
 app.use('/altar-styles', altarStyleRoutes);
 app.use('/offerings', offeringRoutes);
 app.use('/admin', adminRoutes);
+app.use('/api', sharingRoutes);
+
+console.log('✓ All routes registered including sharing routes');
 
 app.use(errorHandler);
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '../auth/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 
 export default function AuthForm() {
   const { login, register, loading, error } = useAuth();
