@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "node index.js",
+    "build": "echo 'No build process required for backend'",
     "dev": "nodemon index.js",
     "test": "node --experimental-vm-modules ../node_modules/jest/bin/jest.js",
     "test-email": "node test-email.js"

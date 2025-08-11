@@ -1,0 +1,51 @@
+services:
+  # Backend API Service
+  - type: web
+    name: mialtar-backend
+    runtime: node
+    plan: free
+    rootDir: ./backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      # Add your environment variables here:
+      # - key: MONGODB_URI
+      #   sync: false  # Set this as secret in Render dashboard
+      # - key: JWT_SECRET
+      #   sync: false  # Set this as secret in Render dashboard
+      # - key: JWT_EXPIRE
+      #   value: 7d
+      # - key: SMTP_HOST
+      #   value: smtp.gmail.com
+      # - key: SMTP_PORT
+      #   value: 587
+      # - key: SMTP_SECURE
+      #   value: false
+      # - key: SMTP_USER
+      #   sync: false  # Set this as secret in Render dashboard
+      # - key: SMTP_PASS
+      #   sync: false  # Set this as secret in Render dashboard
+      # - key: EMAIL_FROM
+      #   value: no-reply@mialtar.com
+      # - key: FRONTEND_URL
+      #   value: https://your-frontend-app.onrender.com
+
+  # Frontend Static Site
+  - type: web
+    name: mialtar-frontend
+    runtime: static
+    plan: free
+    rootDir: ./frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    pullRequestPreviewsEnabled: false
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # - key: VITE_API_URL
+      #   value: https://your-backend-app.onrender.com
